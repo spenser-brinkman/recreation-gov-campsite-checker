@@ -223,7 +223,7 @@ def generate_human_output(
             emoji = Emoji.FAILURE.value
 
         out.append(
-            "{emoji} {park_name} ({park_id}): {current} site(s) available out of {maximum} site(s)".format(
+            "{emoji}  {park_name} ({park_id}): {current} site(s) available out of {maximum} site(s)".format(
                 emoji=emoji,
                 park_name=park_name,
                 park_id=park_id,
@@ -241,22 +241,27 @@ def generate_human_output(
                     )
                 )
                 for date in dates:
+                    start_date = datetime.strptime(date["start"], "%y-%m-%d")
+                    end_date = datetime.strptime(date["end"], "%y-%m-%d")
                     out.append(
-                        "    * {start} -> {end}".format(
-                            start=date["start"], end=date["end"]
+                        "    * {start} -> {end}  |  ({start_day} -> {end_day})".format(
+                            start=date["start"],
+                            start_day=start_date.strftime("%a"),
+                            end=date["end"],
+                            end_day=end_date.strftime("%a")
                         )
                     )
-
+            out.append("\n")
     if has_availabilities:
         out.insert(
             0,
-            "there are campsites available from {start} to {end}!!!".format(
+            "There are campsites available between {start} and {end}!!!".format(
                 start=start_date.strftime(DateFormat.INPUT_DATE_FORMAT.value),
                 end=end_date.strftime(DateFormat.INPUT_DATE_FORMAT.value),
             ),
         )
     else:
-        out.insert(0, "There are no campsites available :(")
+        out.insert(0, "")
     return "\n".join(out), has_availabilities
 
 
